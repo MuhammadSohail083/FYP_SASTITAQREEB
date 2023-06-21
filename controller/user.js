@@ -15,7 +15,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password, phoneNumber, cnic, drivinglicense } = req.body;
     const userEmail = await User.findOne({ email });
-
+console.log(userEmail);
     if (userEmail) {
       const filename = req.file.filename;
       const filePath = `uploads/${filename}`;
@@ -40,7 +40,18 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       drivinglicense: drivinglicense,
       avatar: fileUrl,
     };
-
+    let Newseller = await User.findOne({email});
+    console.log(Newseller);
+    if(Newseller){
+     return next(new ErrorHandler("User already exists", 400));
+    }
+    console.log("now here")
+    Newseller = await User.create(user);
+    res.status(201).json({
+     success: true,
+     message: `Signed Up`,
+   });
+    return
     const activationToken = createActivationToken(user);
     var randomNumber= Math.floor(Math.random() * 900) + 100;
     const activationUrl = `http://localhost:3000/activation/${activationToken}${randomNumber}`;

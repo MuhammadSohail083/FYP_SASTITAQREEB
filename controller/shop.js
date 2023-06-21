@@ -15,8 +15,11 @@ const sendShopToken = require("../utils/shopToken");
 // create shop
 router.post("/create-shop", upload.single("file"), async (req, res, next) => {
   try {
+    console.log("HERE")
     const { email } = req.body;
     const sellerEmail = await Shop.findOne({ email });
+    console.log("HERE Selere"+sellerEmail)
+
     if (sellerEmail) {
       const filename = req.file.filename;
       const filePath = `uploads/${filename}`;
@@ -41,6 +44,41 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
       phoneNumber: req.body.phoneNumber,
       zipCode: req.body.zipCode,
     };
+    //Alternative Work Start
+    console.log("HERE seller"+seller);
+
+    let Newseller = await Shop.findOne({email});
+     if(Newseller){
+      return next(new ErrorHandler("Shop already exists", 400));
+     }
+     console.log("now here")
+     Newseller = await Shop.create(seller);
+     res.status(201).json({
+      success: true,
+      message: `Signed Up`,
+    });
+     return
+     //Alternative Work End
+  //   const { name, email, password, avatar, zipCode, address, phoneNumber } =
+  //   newSeller;
+
+  // let seller = await Shop.findOne({ email });
+
+  // if (seller) {
+  //   return next(new ErrorHandler("User already exists", 400));
+  // }
+
+  // seller = await Shop.create({
+  //   name,
+  //   email,
+  //   avatar,
+  //   password,
+  //   zipCode,
+  //   address,
+  //   phoneNumber,
+  // });
+
+  // sendShopToken(seller, 201, res);
 
     const activationToken = createActivationToken(seller);
 
@@ -201,9 +239,6 @@ router.get(
   })
 );
 
-router.get("/heh",()=>{
-  console.log("hello");
-})
 
 // update shop profile picture
 router.put(
