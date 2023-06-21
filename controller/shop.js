@@ -201,6 +201,10 @@ router.get(
   })
 );
 
+router.get("/heh",()=>{
+  console.log("hello");
+})
+
 // update shop profile picture
 router.put(
   "/update-shop-avatar",
